@@ -11,7 +11,6 @@ namespace WebApplication5.models
         [ForeignKey("ProductId")]
         public int? ProductId { get; set; }
         public int? ProductPrice { get; set; }
-        //public ICollection<Product> Product { get; set; }
 
     }
 }

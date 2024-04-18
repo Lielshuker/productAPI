@@ -1,10 +1,4 @@
-using Aspose.Pdf;
-using Aspose.Pdf.Operators;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using System.Text.Json;
 using WebApplication5;
 using WebApplication5.models;
 
@@ -25,7 +19,6 @@ static async Task<IResult> GetAllProducts(ProductDB db, ProductDB dbPetails)
     return TypedResults.Ok(products);
 }
 
-
 static async Task<IResult> GetProductByID(int id, ProductDB db)
 {
     var productByID = await db.Products.Where(h => h.ProductId == id)
@@ -35,7 +28,6 @@ static async Task<IResult> GetProductByID(int id, ProductDB db)
         : TypedResults.NotFound();
     
 }
-
 
 static async Task<IResult> CreateProduct(ProductDB db,ProductDB dbDetails, Product product)
 {
@@ -55,8 +47,6 @@ static async Task<IResult> CreateProduct(ProductDB db,ProductDB dbDetails, Produ
         return TypedResults.NotFound(ex);
     }
 }
-
-
 
 app.Run();
 
