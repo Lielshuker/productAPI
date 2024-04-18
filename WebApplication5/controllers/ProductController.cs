@@ -8,9 +8,9 @@ namespace WebApplication5.controllers
 {
     public class ProductController
     {
-        public static async Task<IResult> GetAllProducts(ProductDB db, ProductDB dbPetails)
+        public static async Task<IResult> GetAllProducts(ProductDB db)
         {
-            var products = await db.Products.Include(h => h.ProductDetails).ToArrayAsync();
+            var products = await db.Products.Include(p => p.ProductDetails).ToArrayAsync();
             return TypedResults.Ok(products);
         }
 
@@ -25,36 +25,36 @@ namespace WebApplication5.controllers
 
         public static Product? CheckByID(int id, ProductDB db)
         {
-            return  db.Products.Where(h => h.ProductId == id).
-                    Include(i => i.ProductDetails).FirstOrDefault();
+            return  db.Products.Where(p => p.ProductId == id).
+                    Include(d => d.ProductDetails).FirstOrDefault();
         }
             
 
-        public static async Task<IResult> CreateProduct(ProductDB db, ProductDB dbDetails, Product product)
+        public static async Task<IResult> CreateProduct(ProductDB dbProduct, Product product)
         {
             try
             {
-                if (product.ProductId == 0 || product.ProductName == null | product.ProductDetails.ProductPrice == null)
+                if (product.ProductId <= 0 || product.ProductName == null | product.ProductDetails.ProductPrice == null)
                 {
                     return TypedResults.BadRequest();
                 }
-                var productById = CheckByID(product.ProductId, db);
+                var productById = CheckByID(product.ProductId, dbProduct);
                 if (productById == null)
                 {
-                    db.ProductsDetails.Add(product.ProductDetails);
-                    db.Products.Add(product);
-                    await db.SaveChangesAsync();
+                    dbProduct.ProductsDetails.Add(product.ProductDetails);
+                    dbProduct.Products.Add(product);
+                    await dbProduct.SaveChangesAsync();
                     return TypedResults.Ok(product);
                 }
                 else
                 {
-                    return TypedResults.BadRequest();
+                    return TypedResults.Conflict();
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return TypedResults.NotFound(ex);
+                return TypedResults.StatusCode(500);
             }
         }
     }
