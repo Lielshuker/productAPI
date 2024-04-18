@@ -3,7 +3,7 @@ using WebApplication5.models;
 
 namespace WebApplication5
 {
-    class ProductDB : DbContext
+    public class ProductDB : DbContext
     {
         public ProductDB(DbContextOptions<ProductDB> options)
         : base(options) { }

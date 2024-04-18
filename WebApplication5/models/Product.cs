@@ -8,7 +8,7 @@ namespace WebApplication5.models
     {
         [Key]
         [ForeignKey("ProductId")]
-        public int? ProductId { get; set; }
+        public int ProductId { get; set; }
         public string? ProductName { get; set; }
         public virtual ProductDetails? ProductDetails { get; set; }
 

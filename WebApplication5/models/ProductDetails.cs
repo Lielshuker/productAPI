@@ -9,7 +9,7 @@ namespace WebApplication5.models
         [Key]
         [JsonIgnore]
         [ForeignKey("ProductId")]
-        public int? ProductId { get; set; }
+        public int ProductId { get; set; }
         public int? ProductPrice { get; set; }
 
     }
