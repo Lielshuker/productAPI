@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
+using System.Text.Json.Serialization;
+
 
 namespace WebApplication5.models
 {
@@ -8,9 +9,8 @@ namespace WebApplication5.models
     {
         [Key]
         [ForeignKey("ProductId")]
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public string? ProductName { get; set; }
-
         public virtual ProductDetails? ProductDetails { get; set; }
 
     }

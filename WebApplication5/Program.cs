@@ -1,6 +1,10 @@
+using Aspose.Pdf;
+using Aspose.Pdf.Operators;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using WebApplication5;
 using WebApplication5.models;
 
@@ -15,51 +19,44 @@ productApi.MapGet("/", GetAllProducts);
 productApi.MapGet("/{id}", GetProductByID);
 productApi.MapPost("/", CreateProduct);
 
-
 static async Task<IResult> GetAllProducts(ProductDB db, ProductDB dbPetails)
 {
-    var products = await db.Products.Include(product=>product.ProductId).ToArrayAsync();
-    //var products_details = await dbPetails.ProductsDetails.ToArrayAsync();
-    return TypedResults.Ok();
+    var products = await db.Products.Include(h => h.ProductDetails).ToArrayAsync();
+    return TypedResults.Ok(products);
 }
 
-/*    return await db.Products.FindAsync(id.) 
-        is Product product
-            ? TypedResults.Ok(product)
-            : TypedResults.NotFound();*/
 
 static async Task<IResult> GetProductByID(int id, ProductDB db)
 {
-    var productByID =  db.Products.Where(h => h.ProductId == id)
-        .Include(i => i.ProductDetails).FirstOrDefault();
-    return TypedResults.Ok(productByID);
+    var productByID = await db.Products.Where(h => h.ProductId == id)
+        .Include(i => i.ProductDetails).FirstOrDefaultAsync();
+    return productByID is Product product
+        ? TypedResults.Ok(productByID) 
+        : TypedResults.NotFound();
     
 }
 
 
-static async Task<IResult> CreateProduct(ProductDB db, Product product)
+static async Task<IResult> CreateProduct(ProductDB db,ProductDB dbDetails, Product product)
 {
-
-    var newProductDetails = new ProductDetails
+    try
     {
-        ProductPrice = 2
-    };
-    db.ProductsDetails.Add(newProductDetails);
-    db.SaveChanges();
-
-
-
-
-    //p.ProductDetails.Add(p);
-
-    //var newProduct = db.ProductsDetails.Add(new Product());
-    //var newProductDetails = db.ProductsDetails.Add(new ProductDetails()).Entity;
-    // await db.SaveChangesAsync();
-
-    //return TypedResults.Created($"/todoitems/{newProduct.ProductId}", newProduct);
-    return TypedResults.Ok();
-
+        if (product.ProductId == null || product.ProductName == null | product.ProductDetails.ProductId == null)
+        {
+            return TypedResults.BadRequest();
+        } 
+        db.ProductsDetails.Add(product.ProductDetails);
+        db.Products.Add(product);
+        await db.SaveChangesAsync();
+        return TypedResults.Ok(product);
+        
+    } catch (Exception ex)
+    {
+        return TypedResults.NotFound(ex);
+    }
 }
+
+
 
 app.Run();
 
